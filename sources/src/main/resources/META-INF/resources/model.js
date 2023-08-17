@@ -99,7 +99,7 @@ class Model {
     async listPeers(projectId, role) {
         console.assert(projectId);
         console.assert(role);
-
+        console.log("Going to retrieve the Peers- override");
         try {
             return await $.ajax({
                 url: `/api/projects/${projectId}/peers?role=${encodeURIComponent(role)}`,
@@ -386,8 +386,11 @@ class DebugModel extends Model {
 
     async listPeers(projectId, role) {
         var setting = $("#debug-listPeers").val();
+        console.log("Setting variable value ",setting);
         if (!setting) {
-            return super.listPeers(projectId, role);
+            console.log("Getting inside list peers");
+            return [{email:'test@test'}];
+            // return super.listPeers(projectId, role);
         }
         else if (setting === "error") {
             await this._simulateError();
