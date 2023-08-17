@@ -409,9 +409,9 @@ public class ApiResource {
       request.justification != null && request.justification.length() < 100,
       "The justification is too long");
 
-    Preconditions.checkState(
-      this.notificationService.canSendNotifications() || this.runtimeEnvironment.isDebugModeEnabled(),
-      "The multi-party approval feature is not available because the server-side configuration is incomplete");
+//    Preconditions.checkState(
+//      this.notificationService.canSendNotifications() || this.runtimeEnvironment.isDebugModeEnabled(),
+//      "The multi-party approval feature is not available because the server-side configuration is incomplete");
 
     var iapPrincipal = (UserPrincipal) securityContext.getUserPrincipal();
     var projectId = new ProjectId(projectIdString);
@@ -433,10 +433,21 @@ public class ApiResource {
       // Create an approval token and pass it to reviewers.
       //
       var activationToken = this.activationTokenService.createToken(activationRequest);
-      this.notificationService.sendNotification(new RequestActivationNotification(
-        activationRequest,
-        activationToken.expiryTime,
-        createActivationRequestUrl(uriInfo, activationToken.token)));
+
+//      this.notificationService.sendNotification(new RequestActivationNotification(
+//        activationRequest,
+//        activationToken.expiryTime,
+//        createActivationRequestUrl(uriInfo, activationToken.token)));
+      this.logAdapter
+              .newInfoEntry(
+                      LogEvents.API_REQUEST_ROLE,
+                      String.format(
+                              "RRR URL isss %s",
+                              createActivationRequestUrl(uriInfo, activationToken.token))
+                              )
+              .addLabels(le -> addLabels(le, projectId))
+              .addLabels(le -> addLabels(le, activationRequest))
+              .write();
 
       this.logAdapter
         .newInfoEntry(
